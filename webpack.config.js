@@ -1,12 +1,15 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const { DefinePlugin } = require('webpack')
 
 module.exports = {
     // 入口
     entry: './src/index.js',
     // 出口
     output: {
+        clean: true,
         path: path.resolve(__dirname, 'build'),
         filename: 'bundle.js',
         // 静态资源(图片)打包出口路径以及文件名
@@ -75,10 +78,21 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './src/index.html',
         }),
-        new VueLoaderPlugin()
+        new VueLoaderPlugin(),
+        // 每次打包自动删除 Build文件夹
+        new CleanWebpackPlugin(),
+        new DefinePlugin({
+            // 定义全局变量
+            "BASIC_URL": "'./'"
+        })
     ],
     // 开发/生产模式
     mode: "development",
+    // 热模块更新 执行脚本："serve": "webpack serve --open"
+    devServer: {
+        // (默认为true)
+        hot: true
+    },
     resolve: {
         // 路径别名
         alias: {
